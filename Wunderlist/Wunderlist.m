@@ -119,7 +119,15 @@ const NSString *apitoken_key = @"apitoken";
         for ( int i = 0; i < action.messages.count; i ++ )
         {
             AMPMessage *msg = (AMPMessage *)[action.messages objectAtIndex:i];
-            [APIHelper sendToInboxWithContent:msg.subject andApiToken:[self getAPIToken] andDelegate:self];
+           
+            NSString *url   = [msg callSelector:@selector(urlformessage)];
+            if(!url || url.length == 0) url = @"";
+            
+            NSString *subject = msg.subject;
+            if(!subject || subject.length == 0) subject = @"";
+
+            //NSLog(@"Wunderlist: %@ %@",msg.subject, url);
+            [APIHelperWunderlist sendToInboxWithContent:msg.subject note:url andApiToken:[self getAPIToken] andDelegate:self];
         }
     }
     

@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 SpikedSoftware. All rights reserved.
 //
 
-#import "APIHelper.h"
+#import "APIHelperWunderlist.h"
 #import "APIProtocol.h"
 @import AppKit;
 
 static NSOperationQueue *operationQueue = nil;
 
-@implementation APIHelper
+@implementation APIHelperWunderlist
 
 +(NSOperationQueue *)operationQueue
 {
@@ -25,10 +25,19 @@ static NSOperationQueue *operationQueue = nil;
     return operationQueue;
 }
 
++ (NSString *) URLEncodedString_wu: (NSString *)input {
+        CFStringRef encoded = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                                      (__bridge CFStringRef)input,
+                                                                      NULL,
+                                                                      CFSTR("!*'\"();:@&=+$,/?%#[]% "),
+                                                                      kCFStringEncodingUTF8);
+        return CFBridgingRelease(encoded);
+}
+
 + (NSString *) URLEncodedString_ch: (NSString *)input {
     NSMutableString * output = [NSMutableString string];
     const unsigned char * source = (const unsigned char *)[input UTF8String];
-    int sourceLen = strlen((const char *)source);
+    int sourceLen = (int)strlen((const char *)source);
     for (int i = 0; i < sourceLen; ++i) {
         const unsigned char thisChar = source[i];
         if (thisChar == ' '){
@@ -60,7 +69,7 @@ static NSOperationQueue *operationQueue = nil;
     }];
 }
 
-+(void)sendToInboxWithContent:(NSString *)content andApiToken:(NSString *)token andDelegate:(id)delegate
++(void)sendToInboxWithContent: (NSString *)content note:(NSString*)note andApiToken: (NSString *)token andDelegate:(id)delegate;
 {
     NSString *apiUrl = [NSString stringWithFormat:@"https://api.wunderlist.com/me/tasks"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:apiUrl] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20];
@@ -70,14 +79,20 @@ static NSOperationQueue *operationQueue = nil;
     [request setValue:token forHTTPHeaderField:@"Authorization"];
     
     //Set the body data
-    NSString *postBody = [NSString stringWithFormat:@"list_id=inbox&title=%@", [self URLEncodedString_ch:content]];
+    NSString *postBody = [NSString stringWithFormat:@"list_id=inbox&title=%@&note=%@", [self URLEncodedString_ch:content],[self URLEncodedString_wu:note]];
     [request setHTTPBody:[postBody dataUsingEncoding:NSUTF8StringEncoding]];
 
+    //NSLog(@"Wunderlist request %@",postBody);
     [NSURLConnection sendAsynchronousRequest:request queue:[self operationQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        
-        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        [delegate finishedCallFor:@"SendToInbox" withData:dict];
+        //NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        //NSLog(@"Wunderlist return data %@",data);
+        NSDictionary *dict = [NSDictionary dictionary];
+        if(data)
+        {
+            dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            //NSLog(@"Wunderlist return dict %@",dict);
+            [delegate finishedCallFor:@"SendToInbox" withData:dict];
+        }
     }];
 }
 

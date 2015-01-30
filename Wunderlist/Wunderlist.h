@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <AMPluginFramework/AMPluginFramework.h>
 #import "APIProtocol.h"
-#import "APIHelper.h"
+#import "APIHelperWunderlist.h"
 
 @interface Wunderlist : AMPlugin<APIProtocol>
 
 -(void)setAPIToken: (NSString *)apiToken;
 -(NSString *)getAPIToken;
 
--(BOOL)Save;
+//-(BOOL)Save;
 
 @end

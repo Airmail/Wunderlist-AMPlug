@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9BA9BCFF1A46CE8600640207 /* APIHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA9BCF81A46CE8600640207 /* APIHelper.m */; };
+		9BA9BCFF1A46CE8600640207 /* APIHelperWunderlist.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA9BCF81A46CE8600640207 /* APIHelperWunderlist.m */; };
 		9BA9BD001A46CE8600640207 /* Wunderlist.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA9BCFA1A46CE8600640207 /* Wunderlist.m */; };
 		9BA9BD011A46CE8600640207 /* WunderlistConfigView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA9BCFC1A46CE8600640207 /* WunderlistConfigView.m */; };
 		9BA9BD021A46CE8600640207 /* AMPluginFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BA9BCFE1A46CE8600640207 /* AMPluginFramework.framework */; };
@@ -17,8 +17,8 @@
 /* Begin PBXFileReference section */
 		9BA9BCEC1A46CE4B00640207 /* Wunderlist.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Wunderlist.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BA9BCF01A46CE4B00640207 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9BA9BCF71A46CE8600640207 /* APIHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHelper.h; sourceTree = "<group>"; };
-		9BA9BCF81A46CE8600640207 /* APIHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIHelper.m; sourceTree = "<group>"; };
+		9BA9BCF71A46CE8600640207 /* APIHelperWunderlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHelperWunderlist.h; sourceTree = "<group>"; };
+		9BA9BCF81A46CE8600640207 /* APIHelperWunderlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIHelperWunderlist.m; sourceTree = "<group>"; };
 		9BA9BCF91A46CE8600640207 /* APIProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIProtocol.h; sourceTree = "<group>"; };
 		9BA9BCFA1A46CE8600640207 /* Wunderlist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Wunderlist.m; sourceTree = "<group>"; };
 		9BA9BCFB1A46CE8600640207 /* Wunderlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wunderlist.h; sourceTree = "<group>"; };
@@ -82,8 +82,8 @@
 		9BA9BCF61A46CE8600640207 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				9BA9BCF71A46CE8600640207 /* APIHelper.h */,
-				9BA9BCF81A46CE8600640207 /* APIHelper.m */,
+				9BA9BCF71A46CE8600640207 /* APIHelperWunderlist.h */,
+				9BA9BCF81A46CE8600640207 /* APIHelperWunderlist.m */,
 				9BA9BCF91A46CE8600640207 /* APIProtocol.h */,
 			);
 			path = API;
@@ -158,7 +158,7 @@
 			files = (
 				9BA9BD011A46CE8600640207 /* WunderlistConfigView.m in Sources */,
 				9BA9BD001A46CE8600640207 /* Wunderlist.m in Sources */,
-				9BA9BCFF1A46CE8600640207 /* APIHelper.m in Sources */,
+				9BA9BCFF1A46CE8600640207 /* APIHelperWunderlist.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

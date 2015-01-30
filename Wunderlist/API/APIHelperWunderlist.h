@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface APIHelper : NSObject
+@interface APIHelperWunderlist : NSObject
 
 +(void)getUserWithEmail: (NSString *)email andPassword: (NSString *)password andDelegate: (id)delegate;
-+(void)sendToInboxWithContent: (NSString *)content andApiToken: (NSString *)token andDelegate: (id)delegate;
++(void)sendToInboxWithContent: (NSString *)content note:(NSString*)note andApiToken: (NSString *)token andDelegate: (id)delegate;
 
 @end

@@ -9,7 +9,7 @@
 #import "WunderlistConfigView.h"
 #import "Wunderlist.h"
 #import "APIProtocol.h"
-#import "APIHelper.h"
+#import "APIHelperWunderlist.h"
 
 @interface WunderlistConfigView ()
 
@@ -154,7 +154,7 @@
     }
     else
     {
-        [APIHelper getUserWithEmail:self.emailAddress.stringValue andPassword:self.password.stringValue andDelegate:self];
+        [APIHelperWunderlist getUserWithEmail:self.emailAddress.stringValue andPassword:self.password.stringValue andDelegate:self];
     }
 }
 
