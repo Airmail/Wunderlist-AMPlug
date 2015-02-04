@@ -81,7 +81,7 @@
             
             self.apiKey = [[NSTextField alloc] initWithFrame:CGRectMake(x, y, 250.0f, 22.0f)];
             [self.apiKey setEditable: NO];
-            [self.apiKey setPlaceholderString:@"API Key from your account"];
+//            [self.apiKey setPlaceholderString:@"API Key from your account"];
             
             NSString *apiKey = [[self myPlugin] getAPIToken];
             if (apiKey != nil)
@@ -108,6 +108,8 @@
             
         }
         @catch (NSException *exception) {
+            NSLog(@"Wunderlist Exception %@",exception);
+
             NSAlert *alertView = [NSAlert new];
             [alertView setMessageText:@"Error when creating view"];
             [alertView runModal];
