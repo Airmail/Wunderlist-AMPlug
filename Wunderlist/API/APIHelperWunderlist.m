@@ -63,7 +63,10 @@ static NSOperationQueue *operationQueue = nil;
     NSString *postBody = [NSString stringWithFormat:@"email=%@&password=%@", email, password];
     [request setHTTPBody:[postBody dataUsingEncoding:NSUTF8StringEncoding]];
     
-    [NSURLConnection sendAsynchronousRequest:request queue:[self operationQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    [NSURLConnection sendAsynchronousRequest:request queue:[self operationQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError){
+
+        if(connectionError)
+            NSLog(@"Wunderlist getUserWithEmail %@",connectionError);
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         [delegate finishedCallFor:@"GetUser" withData:dict];
     }];
