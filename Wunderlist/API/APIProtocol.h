@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol APIProtocol <NSObject>
+@protocol APIProtocolWunderlist <NSObject>
 
 -(void)finishedCallFor: (NSString *)method withData: (NSDictionary*)dict;
 

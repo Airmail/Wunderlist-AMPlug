@@ -11,11 +11,9 @@
 #import "APIProtocol.h"
 #import "APIHelperWunderlist.h"
 
-@interface Wunderlist : AMPlugin<APIProtocol>
-
--(void)setAPIToken: (NSString *)apiToken;
--(NSString *)getAPIToken;
-
-//-(BOOL)Save;
-
+@interface Wunderlist : AMPlugin<APIProtocolWunderlist>
+{
+    
+}
+- (void) PostError:(NSError*)error;
 @end

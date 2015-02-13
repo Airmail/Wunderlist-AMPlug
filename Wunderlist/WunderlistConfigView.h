@@ -8,9 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AMPluginFramework/AMPluginFramework.h>
-#import "APIProtocol.h"
+//#import "APIProtocol.h"
 
-@interface WunderlistConfigView : AMPView<APIProtocol>
+static NSString *const wu_accessToken   = @"wu_accessToken";
+static NSString *const wu_list          = @"wu_list";
+
+@interface WunderlistConfigView : AMPView //<APIProtocolWunderlist>
 
 
 

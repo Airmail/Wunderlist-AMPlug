@@ -10,13 +10,18 @@
 #import "Wunderlist.h"
 #import "APIProtocol.h"
 #import "APIHelperWunderlist.h"
+#import "WUWebView.h"
+#import "WUURLParser.h"
+#import <WebKit/WebKit.h>
+
 
 @interface WunderlistConfigView ()
-
-@property (strong, nonatomic) NSTextField *apiKey;
-@property (strong, nonatomic) NSArray *listsAvailable;
-@property (strong, nonatomic) NSTextField *emailAddress;
-@property (strong, nonatomic) NSTextField *password;
+{
+    NSButton *loginButton;
+}
+@property (strong) NSString *accessToken;
+@property (strong) NSWindow *win;
+@property (strong) NSOperationQueue *queue;
 
 @end
 
@@ -35,81 +40,21 @@
     {
         @try {
             
-            float x = 0, y = 0;
+            loginButton = [[NSButton alloc] initWithFrame:CGRectMake(20, 20, 120.0f, 25.0f)];
+            [loginButton setTitle:@"Login"];
+            [loginButton setButtonType:NSMomentaryPushInButton];
+            [loginButton setBezelStyle:NSRoundedBezelStyle];
+            [loginButton setTarget:self];
+            [loginButton setAction:@selector(Login:)];
+            [self addSubview:loginButton];
             
-            NSTextView *emailLabel = [[NSTextView alloc] initWithFrame:CGRectMake(x, y, 100.0f, 22.0f)];
-            [emailLabel setString:@"Email Address"];
-            [emailLabel setEditable:false];
-            [emailLabel setSelectable:false];
-            [emailLabel setDrawsBackground:false];
-            x += emailLabel.frame.size.width + 10.0f;
+            [self LoadToken];
+            [self manageLoginBtn];
             
-            self.emailAddress = [[NSTextField alloc] initWithFrame:CGRectMake(x, y, 180.0f, 22.0f)];
-            [self.emailAddress setEditable:YES];
-            
-            x = 0;
-            y += self.emailAddress.frame.size.height + 5.0f;
-            
-            NSTextView *passwordLabel = [[NSTextView alloc] initWithFrame:CGRectMake(x, y, 100.0f, 22.0f)];
-            [passwordLabel setString:@"Password"];
-            [passwordLabel setEditable:false];
-            [passwordLabel setSelectable:false];
-            [passwordLabel setDrawsBackground:false];
-            x += passwordLabel.frame.size.width + 10.0f;
-            
-            self.password = [[NSSecureTextField alloc] initWithFrame:CGRectMake(x, y, 120.f, 22.0f)];
-            [self.password setEditable:YES];
-            
-            x += self.password.frame.size.width + 10.0f;
-            
-            NSButton *getApiToken = [[NSButton alloc] initWithFrame:CGRectMake(x, y, 100.0f, 25.0f)];
-            [getApiToken setTitle:@"Get Token"];
-            [getApiToken setButtonType:NSMomentaryPushInButton];
-            [getApiToken setBezelStyle:NSRoundedBezelStyle];
-            [getApiToken setTarget:self];
-            [getApiToken setAction:@selector(getApiToken_clicked)];
 
-            x = 0;
-            y += self.password.frame.size.height + 5.0f;
-            
-            NSTextView *apiKeyLabel = [[NSTextView alloc] initWithFrame:CGRectMake(x, y, 100.0f, 22.0f)];
-            [apiKeyLabel setString:@"API Key"];
-            [apiKeyLabel setEditable:false];
-            [apiKeyLabel setSelectable:false];
-            [apiKeyLabel setDrawsBackground:false];
-            x += apiKeyLabel.frame.size.width + 10.0f;
-            
-            self.apiKey = [[NSTextField alloc] initWithFrame:CGRectMake(x, y, 250.0f, 22.0f)];
-            [self.apiKey setEditable: NO];
-//            [self.apiKey setPlaceholderString:@"API Key from your account"];
-            
-            NSString *apiKey = [[self myPlugin] getAPIToken];
-            if (apiKey != nil)
-                [self.apiKey setStringValue:apiKey];
-            
-            x = 0;
-            y += self.apiKey.frame.size.height + 5.0;
-            
-            NSButton *saveButton = [[NSButton alloc] initWithFrame:CGRectMake(0, y, 120.0f, 25.0f)];
-            [saveButton setTitle:@"Save Changes"];
-            [saveButton setButtonType:NSMomentaryPushInButton];
-            [saveButton setBezelStyle:NSRoundedBezelStyle];
-            [saveButton setTarget:self];
-            [saveButton setAction:@selector(saveChangesAction:)];
-            
-            [self addSubview:emailLabel];
-            [self addSubview:self.emailAddress];
-            [self addSubview:passwordLabel];
-            [self addSubview:self.password];
-            [self addSubview:getApiToken];
-            [self addSubview:apiKeyLabel];
-            [self addSubview:self.apiKey];
-            [self addSubview:saveButton];
-            
         }
         @catch (NSException *exception) {
             NSLog(@"Wunderlist Exception %@",exception);
-
             NSAlert *alertView = [NSAlert new];
             [alertView setMessageText:@"Error when creating view"];
             [alertView runModal];
@@ -133,83 +78,158 @@
     });
 }
 
+- (void) LoadToken
+{
+    self.accessToken = @"";
+    if(self.plugin.preferences[wu_accessToken])
+        self.accessToken = self.plugin.preferences[wu_accessToken];
+    //NSLog(@"LoadToken %@",self.accessToken);
+    [self wuList:self.accessToken block:^(NSDictionary *dict, NSError *err) {
+        
+    }];
+
+}
+
 - (void) LoadView
 {
+    if([self authenticated])
+    {
+        [self wuList:self.accessToken block:^(NSDictionary *dict, NSError *err) {
+                
+        }];
+    }
+
+}
+
+- (void) RenderView
+{
     
 }
 
-#pragma mark 'Functionality behind UI Elements'
--(void)getApiToken_clicked
+
+- (BOOL) authenticated
 {
-    NSString *errorMessage = nil;
-    
-    if (self.emailAddress.stringValue.length == 0)
-        errorMessage = @"Email Address is required";
-    else if (self.password.stringValue.length == 0)
-        errorMessage = @"Password is required";
-    
-    if (errorMessage != nil)
-    {
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:errorMessage];
-        [alert runModal];
-    }
-    else
-    {
-        [APIHelperWunderlist getUserWithEmail:self.emailAddress.stringValue andPassword:self.password.stringValue andDelegate:self];
-    }
+    if(self.accessToken && self.accessToken.length > 0)
+        return YES;
+    return NO;
 }
 
--(void)popUpAction:(id)sender
+- (void) manageLoginBtn
 {
-}
-
--(void)saveChangesAction: (id)sender
-{
-    //Get the Selected List and the API Key, then save them
-    Wunderlist *plugin = (Wunderlist *)[self plugin];
-    NSString *message;
-    BOOL shouldSave = YES;
-    
-    //Save the API Key
-    if ([self.apiKey stringValue].length == 40)
-    {
-        [plugin setAPIToken:[self.apiKey stringValue]];
-    }
-    else
-    {
-        shouldSave = NO;
-        message = @"API Key not quite correct. Should be 40 characters.";
-    }
-    
-    if (shouldSave)
-    {
-        [plugin SavePreferences];
-        message = @"Preferences have been saved.";
-    }
-    
-    NSAlert *al = [[NSAlert alloc] init];
-    [al setMessageText:message];
-    [al runModal];
-}
-
--(void)finishedCallFor:(NSString *)method withData:(NSDictionary *)dict
-{
-    if ([method isEqualToString:@"GetUser"])
-    {
-        if (dict == nil)
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        if([self authenticated])
         {
-            NSAlert *al = [[NSAlert alloc] init];
-            [al setMessageText:@"Login Error"];
-            [al runModal];
+            [loginButton setTitle:@"Logout"];
+            [loginButton setAction:@selector(Logout:)];
         }
         else
         {
-            //Great news, we have the API key.
-            [self.apiKey setStringValue:[dict objectForKey:@"token"]];
+            [loginButton setTitle:@"Login"];
+            [loginButton setAction:@selector(Login:)];
         }
-    }
+
+    });
 }
+
+- (void) Logout:(id)sender
+{
+    self.accessToken = @"";
+    [self saveAccessToken];
+    [self manageLoginBtn];
+}
+
+- (void) saveAccessToken
+{
+    self.plugin.preferences[wu_accessToken] = self.accessToken;
+    [self.plugin SavePreferences];
+}
+
+- (void) Login:(id)sender
+{
+    if([self authenticated])
+        return;
+
+    NSRect myr          = NSMakeRect(0, 0, 600, 550);
+    NSScreen *screen    = [NSScreen mainScreen];
+    NSRect screenRect   = [screen visibleFrame];
+    NSRect r            = NSMakeRect(screenRect.size.width/2 - myr.size.width/2 , screenRect.size.height/2 -  myr.size.height/2, myr.size.width, myr.size.height);
+    
+    self.win            = [[NSWindow alloc] initWithContentRect:r
+                                                      styleMask:NSTitledWindowMask | NSClosableWindowMask
+                                                        backing:NSBackingStoreBuffered
+                                                          defer:YES];
+    
+    WUWebView *webView = [[WUWebView alloc] initWithFrame:r];
+    [webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
+    [self.win setContentView:webView];
+    [self.win setReleasedWhenClosed:NO];
+    [self.win setTitle:@"Wunderlist"];
+    
+    [webView setPolicyForNavigationBlock:^(WUWebView *wv, NSDictionary *actionInformation, NSURLRequest *request, WebFrame *frame, id<WebPolicyDecisionListener> listener) {
+        
+        //NSLog(@"%@",request);
+        if([request.URL.absoluteString isEqualToString:@"https://www.wunderlist.com/login"])
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.win makeKeyAndOrderFront:self];
+            });
+        }
+        if([request.URL.host isEqualToString:@"airmailapp.com"])
+        {
+            WUURLParser *wup = [[WUURLParser alloc] initWithURL:request.URL];
+            NSString *code   = [wup valueForVariable:@"code"];
+            //NSLog(@"code %@",code);
+            if(code && code.length > 0)
+            {
+                [APIHelperWunderlist accessToken:code block:^(NSDictionary *dict, NSError *err) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.win close];
+                        self.win = nil;
+                    });
+
+                    if(err)
+                    {
+                        [(Wunderlist*)self.plugin PostError:err];
+                    }
+                    else
+                    {
+                        self.accessToken = dict[@"access_token"];
+                        [self saveAccessToken];
+                    }
+                    [self manageLoginBtn];
+
+                }];
+            }
+            [listener ignore];
+        }
+        [listener use];
+        
+    }];
+    
+    NSString *u = [NSString stringWithFormat:@"https://www.wunderlist.com/oauth/authorize?client_id=%@&redirect_uri=%@",wu_oauth_kClientID,@"http://airmailapp.com"];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
+}
+
+- (void) wuList:(NSString*)accessToken block:(void (^)(NSDictionary *dict, NSError*err))block
+{
+    [APIHelperWunderlist wuApiList:self.accessToken block:^(NSDictionary *dict, NSError *err) {
+        
+        //NSLog(@"APIHelperWunderlist %@",dict);
+        if(!err)
+        {
+            self.plugin.preferences[wu_list] = dict;
+            [self.plugin SavePreferences];
+        }
+        block(dict,err);
+    }];
+}
+
+
+
+
+
 
 
 @end

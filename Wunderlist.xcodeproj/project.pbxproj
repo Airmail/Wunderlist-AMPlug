@@ -12,6 +12,9 @@
 		9BA9BD011A46CE8600640207 /* WunderlistConfigView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA9BCFC1A46CE8600640207 /* WunderlistConfigView.m */; };
 		9BA9BD021A46CE8600640207 /* AMPluginFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BA9BCFE1A46CE8600640207 /* AMPluginFramework.framework */; };
 		9BCEB9541A724B3200DF56B8 /* plugins-Wunderlist.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BCEB9531A724B3200DF56B8 /* plugins-Wunderlist.png */; };
+		F521C6921A8E67800046031D /* WUWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F521C6911A8E67800046031D /* WUWebView.m */; };
+		F521C6C91A8E6BD80046031D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F521C6C81A8E6BD80046031D /* WebKit.framework */; };
+		F521C6D21A8EABFF0046031D /* WUURLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F521C6D11A8EABFF0046031D /* WUURLParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,11 @@
 		9BA9BCFD1A46CE8600640207 /* WunderlistConfigView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WunderlistConfigView.h; sourceTree = "<group>"; };
 		9BA9BCFE1A46CE8600640207 /* AMPluginFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AMPluginFramework.framework; sourceTree = "<group>"; };
 		9BCEB9531A724B3200DF56B8 /* plugins-Wunderlist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plugins-Wunderlist.png"; sourceTree = "<group>"; };
+		F521C6901A8E67800046031D /* WUWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUWebView.h; sourceTree = "<group>"; };
+		F521C6911A8E67800046031D /* WUWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUWebView.m; sourceTree = "<group>"; };
+		F521C6C81A8E6BD80046031D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		F521C6D01A8EABFF0046031D /* WUURLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUURLParser.h; sourceTree = "<group>"; };
+		F521C6D11A8EABFF0046031D /* WUURLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUURLParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F521C6C91A8E6BD80046031D /* WebKit.framework in Frameworks */,
 				9BA9BD021A46CE8600640207 /* AMPluginFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +52,7 @@
 		9BA9BCE31A46CE4B00640207 = {
 			isa = PBXGroup;
 			children = (
+				F521C6C81A8E6BD80046031D /* WebKit.framework */,
 				9BA9BCEE1A46CE4B00640207 /* Wunderlist */,
 				9BA9BCED1A46CE4B00640207 /* Products */,
 			);
@@ -60,10 +70,14 @@
 			isa = PBXGroup;
 			children = (
 				9BA9BCF61A46CE8600640207 /* API */,
-				9BA9BCFA1A46CE8600640207 /* Wunderlist.m */,
 				9BA9BCFB1A46CE8600640207 /* Wunderlist.h */,
-				9BA9BCFC1A46CE8600640207 /* WunderlistConfigView.m */,
+				9BA9BCFA1A46CE8600640207 /* Wunderlist.m */,
 				9BA9BCFD1A46CE8600640207 /* WunderlistConfigView.h */,
+				9BA9BCFC1A46CE8600640207 /* WunderlistConfigView.m */,
+				F521C6D01A8EABFF0046031D /* WUURLParser.h */,
+				F521C6D11A8EABFF0046031D /* WUURLParser.m */,
+				F521C6901A8E67800046031D /* WUWebView.h */,
+				F521C6911A8E67800046031D /* WUWebView.m */,
 				9BA9BCFE1A46CE8600640207 /* AMPluginFramework.framework */,
 				9BA9BCEF1A46CE4B00640207 /* Supporting Files */,
 			);
@@ -157,6 +171,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BA9BD011A46CE8600640207 /* WunderlistConfigView.m in Sources */,
+				F521C6921A8E67800046031D /* WUWebView.m in Sources */,
+				F521C6D21A8EABFF0046031D /* WUURLParser.m in Sources */,
 				9BA9BD001A46CE8600640207 /* Wunderlist.m in Sources */,
 				9BA9BCFF1A46CE8600640207 /* APIHelperWunderlist.m in Sources */,
 			);

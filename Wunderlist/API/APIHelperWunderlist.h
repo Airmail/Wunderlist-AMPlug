@@ -8,9 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+static NSString *const wu_oauth_kClientID              = @"";
+static NSString *const wu_oauth_kClientSecret          = @"";
+
 @interface APIHelperWunderlist : NSObject
 
-+(void)getUserWithEmail: (NSString *)email andPassword: (NSString *)password andDelegate: (id)delegate;
-+(void)sendToInboxWithContent: (NSString *)content note:(NSString*)note andApiToken: (NSString *)token andDelegate: (id)delegate;
++ (void) accessToken:(NSString*)code block:(void (^)(NSDictionary*dict, NSError*err))block;
++ (void) wuApiList :(NSString*)accessToken block:(void (^)(NSDictionary *dict, NSError*err))block;
++ (void) wuApiTask:(NSString*)accessToken title:(NSString*)title comment:(NSString*)comment listid:(NSNumber*)listId block:(void (^)(NSDictionary*dict, NSError*err))block;
 
 @end
