@@ -34,6 +34,7 @@
 		F521C6C81A8E6BD80046031D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		F521C6D01A8EABFF0046031D /* WUURLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WUURLParser.h; sourceTree = "<group>"; };
 		F521C6D11A8EABFF0046031D /* WUURLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WUURLParser.m; sourceTree = "<group>"; };
+		F521C6D31A8ECC670046031D /* wukeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wukeys.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +70,7 @@
 		9BA9BCEE1A46CE4B00640207 /* Wunderlist */ = {
 			isa = PBXGroup;
 			children = (
+				F521C6D31A8ECC670046031D /* wukeys.h */,
 				9BA9BCF61A46CE8600640207 /* API */,
 				9BA9BCFB1A46CE8600640207 /* Wunderlist.h */,
 				9BA9BCFA1A46CE8600640207 /* Wunderlist.m */,
