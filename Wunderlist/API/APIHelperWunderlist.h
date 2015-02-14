@@ -11,8 +11,6 @@
 static NSString *const wu_oauth_kClientID              = @"";
 static NSString *const wu_oauth_kClientSecret          = @"";
 
-
-
 @interface APIHelperWunderlist : NSObject
 
 + (void) accessToken:(NSString*)code block:(void (^)(NSDictionary*dict, NSError*err))block;
