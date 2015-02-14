@@ -12,6 +12,7 @@
 
 static NSString *const wu_accessToken   = @"wu_accessToken";
 static NSString *const wu_list          = @"wu_list";
+static NSString *const wu_user          = @"wu_user";
 
 @interface WunderlistConfigView : AMPView //<APIProtocolWunderlist>
 

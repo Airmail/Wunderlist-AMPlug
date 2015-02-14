@@ -18,6 +18,7 @@
 @interface WunderlistConfigView ()
 {
     NSButton *loginButton;
+    NSTextField *nameField;
 }
 @property (strong) NSString *accessToken;
 @property (strong) NSWindow *win;
@@ -40,13 +41,27 @@
     {
         @try {
             
-            loginButton = [[NSButton alloc] initWithFrame:CGRectMake(20, 20, 120.0f, 25.0f)];
+            loginButton = [[NSButton alloc] initWithFrame:CGRectMake(20, 20, 120.0f, 30.0f)];
             [loginButton setTitle:@"Login"];
             [loginButton setButtonType:NSMomentaryPushInButton];
             [loginButton setBezelStyle:NSRoundedBezelStyle];
             [loginButton setTarget:self];
             [loginButton setAction:@selector(Login:)];
             [self addSubview:loginButton];
+            
+            nameField = [[NSTextField alloc] initWithFrame:NSMakeRect(20, 60, 360, 25)];
+//            NSLog(@"nameField1 %@",NSStringFromRect(nameField1.frame));
+            [nameField setStringValue:@"User:"];
+            [nameField setBordered:NO];
+            [nameField setFont:[NSFont systemFontOfSize:11]];
+            [nameField setBezeled:NO];
+            [nameField setDrawsBackground:NO];//deprecated
+            [nameField setEditable:NO];
+            [nameField setSelectable:NO];
+            [nameField setFont:[NSFont systemFontOfSize:13]];
+            [[nameField cell] setBackgroundStyle:NSBackgroundStyleRaised];
+            [self addSubview:nameField];
+
             
             [self LoadToken];
             [self manageLoginBtn];
@@ -55,6 +70,7 @@
         }
         @catch (NSException *exception) {
             NSLog(@"Wunderlist Exception %@",exception);
+            
             NSAlert *alertView = [NSAlert new];
             [alertView setMessageText:@"Error when creating view"];
             [alertView runModal];
@@ -83,22 +99,33 @@
     self.accessToken = @"";
     if(self.plugin.preferences[wu_accessToken])
         self.accessToken = self.plugin.preferences[wu_accessToken];
+    
     //NSLog(@"LoadToken %@",self.accessToken);
-    [self wuList:self.accessToken block:^(NSDictionary *dict, NSError *err) {
-        
-    }];
-
+    [self BasicWu];
 }
 
 - (void) LoadView
 {
     if([self authenticated])
     {
-        [self wuList:self.accessToken block:^(NSDictionary *dict, NSError *err) {
-                
-        }];
+        [self BasicWu];
     }
 
+}
+
+- (void) BasicWu
+{
+    [self wuUser:self.accessToken block:^(NSDictionary *dict, NSError *err) {
+        
+        //NSLog(@"wuUser %@",dict);
+        [self manageLoginBtn];
+        
+        [self wuList:self.accessToken block:^(NSArray *arr, NSError *err) {
+            //NSLog(@"wuList %@",dict);
+        }];
+        
+    }];
+    
 }
 
 - (void) RenderView
@@ -128,13 +155,24 @@
             [loginButton setTitle:@"Login"];
             [loginButton setAction:@selector(Login:)];
         }
+        
+        nameField.stringValue = [NSString stringWithFormat:@"User:"];
+        NSDictionary *user    = self.plugin.preferences[wu_user];
+        if(user)
+        {
+            NSString *email = user[@"email"];
+            if(email.length > 0)
+                nameField.stringValue = [NSString stringWithFormat:@"User: %@",email];
+        }
 
     });
 }
 
 - (void) Logout:(id)sender
 {
-    self.accessToken = @"";
+    self.plugin.preferences[wu_user] = @{};
+    self.plugin.preferences[wu_list] = @[];
+    self.accessToken                 = @"";
     [self saveAccessToken];
     [self manageLoginBtn];
 }
@@ -161,11 +199,23 @@
                                                           defer:YES];
     
     WUWebView *webView = [[WUWebView alloc] initWithFrame:r];
+    
+    CFUUIDRef uuid = CFUUIDCreate(nil);
+    NSString *uuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(nil, uuid));
+    CFRelease(uuid);
+    [webView setIdentifier:uuidString];
+    
     [webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
     [self.win setContentView:webView];
     [self.win setReleasedWhenClosed:NO];
     [self.win setTitle:@"Wunderlist"];
     
+    [webView setResourceLoadBlock:^NSURLRequest *(WUWebView *wv, id identifier, NSURLRequest *request, NSURLResponse *redirectResponse, WebDataSource *dataSource) {
+        
+        NSURLRequest *requestBack = [NSURLRequest requestWithURL:[request URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:[request timeoutInterval]];
+        return requestBack;
+    }];
+
     [webView setPolicyForNavigationBlock:^(WUWebView *wv, NSDictionary *actionInformation, NSURLRequest *request, WebFrame *frame, id<WebPolicyDecisionListener> listener) {
         
         //NSLog(@"%@",request);
@@ -197,6 +247,7 @@
                     {
                         self.accessToken = dict[@"access_token"];
                         [self saveAccessToken];
+                        [self BasicWu];
                     }
                     [self manageLoginBtn];
 
@@ -212,15 +263,42 @@
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
 }
 
-- (void) wuList:(NSString*)accessToken block:(void (^)(NSDictionary *dict, NSError*err))block
+
+
+- (void) wuList:(NSString*)accessToken block:(void (^)(NSArray *arrx, NSError*err))block
 {
-    [APIHelperWunderlist wuApiList:self.accessToken block:^(NSDictionary *dict, NSError *err) {
+    [APIHelperWunderlist wuApiList:self.accessToken block:^(NSArray *arrx, NSError *err) {
         
         //NSLog(@"APIHelperWunderlist %@",dict);
         if(!err)
         {
-            self.plugin.preferences[wu_list] = dict;
+            self.plugin.preferences[wu_list] = arrx;
             [self.plugin SavePreferences];
+        }
+        block(arrx,err);
+    }];
+}
+
+- (void) wuUser:(NSString*)accessToken block:(void (^)(NSDictionary *dict, NSError*err))block
+{
+    [APIHelperWunderlist wuApiUser:self.accessToken block:^(NSDictionary *dict, NSError *err) {
+        
+        //NSLog(@"APIHelperWunderlist %@",dict);
+        if(!err)
+        {
+            self.plugin.preferences[wu_user] = dict;
+            [self.plugin SavePreferences];
+            
+            //        {
+            //            "id": 6234958,
+            //            "name": "BENCHMARK",
+            //            "email": "benchmark@example.com",
+            //            "created_at": "2013-08-30T08:25:58.000Z",
+            //            "revision": 1
+            //        }
+            
+            
+
         }
         block(dict,err);
     }];

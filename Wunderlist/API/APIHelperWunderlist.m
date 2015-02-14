@@ -64,7 +64,46 @@ static NSOperationQueue *operationQueue = nil;
     
 }
 
-+ (void) wuApiList:(NSString*)accessToken block:(void (^)(NSDictionary*dict, NSError*err))block
++ (void) wuApiUser:(NSString*)accessToken block:(void (^)(NSDictionary*dict, NSError*err))block;
+{
+    NSString *apiURL                = [NSString stringWithFormat:@"https://a.wunderlist.com/api/v1/user"];
+    NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:apiURL] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:0];
+    [theRequest setValue:accessToken                forHTTPHeaderField:@"X-Access-Token"];
+    [theRequest setValue:wu_oauth_kClientID         forHTTPHeaderField:@"X-Client-ID"];
+    [theRequest setValue:@"application/json"        forHTTPHeaderField:@"Content-Type"];
+    
+    [NSURLConnection sendAsynchronousRequest:theRequest queue:self.operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        
+        if(connectionError)
+        {
+            NSLog(@"wuApiUser connectionError %@",connectionError);
+            block(nil,connectionError);
+            return;
+        }
+        
+        NSError *err        = nil;
+        NSDictionary *dict  = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+        if(err)
+        {
+            NSLog(@"wuApiUser NSJSONSerialization %@",err);
+            block(nil,err);
+            return;
+        }
+        
+//        {
+//            "id": 6234958,
+//            "name": "BENCHMARK",
+//            "email": "benchmark@example.com",
+//            "created_at": "2013-08-30T08:25:58.000Z",
+//            "revision": 1
+//        }
+
+        block(dict,nil);
+    }];
+
+}
+
++ (void) wuApiList:(NSString*)accessToken block:(void (^)(NSArray *arrx, NSError*err))block
 {
     NSString *apiURL                = [NSString stringWithFormat:@"https://a.wunderlist.com/api/v1/lists"];
     NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:apiURL] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:0];
@@ -82,14 +121,14 @@ static NSOperationQueue *operationQueue = nil;
         }
         
         NSError *err        = nil;
-        NSDictionary *dict  = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+        NSArray *arr  = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
         if(err)
         {
             NSLog(@"wuApiList NSJSONSerialization %@",err);
             block(nil,err);
             return;
         }
-        block(dict,nil);
+        block(arr,nil);
     }];
 }
 
