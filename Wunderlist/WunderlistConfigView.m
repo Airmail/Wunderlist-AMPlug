@@ -62,7 +62,6 @@
             [[nameField cell] setBackgroundStyle:NSBackgroundStyleRaised];
             [self addSubview:nameField];
 
-            
             [self LoadToken];
             [self manageLoginBtn];
             
@@ -100,7 +99,7 @@
     if(self.plugin.preferences[wu_accessToken])
         self.accessToken = self.plugin.preferences[wu_accessToken];
     
-    //NSLog(@"LoadToken %@",self.accessToken);
+    //NSLog(@"self.plugin.preferences %@",self.plugin.preferences);
     [self BasicWu];
 }
 
@@ -175,6 +174,19 @@
     self.accessToken                 = @"";
     [self saveAccessToken];
     [self manageLoginBtn];
+    //NSLog(@"Logout self.plugin.preferences %@",self.plugin.preferences);
+
+//    [APIHelperWunderlist revoke_accessToken:self.accessToken block:^(BOOL ok, NSError *err) {
+//        
+//        self.plugin.preferences[wu_user] = @{};
+//        self.plugin.preferences[wu_list] = @[];
+//        self.accessToken                 = @"";
+//        [self saveAccessToken];
+//        [self manageLoginBtn];
+//        NSLog(@"Logout self.plugin.preferences %@",self.plugin.preferences);
+//
+//    }];
+    
 }
 
 - (void) saveAccessToken
@@ -186,7 +198,10 @@
 - (void) Login:(id)sender
 {
     if([self authenticated])
+    {
+        NSLog(@"Wunderlist already authenticated");
         return;
+    }
 
     NSRect myr          = NSMakeRect(0, 0, 600, 550);
     NSScreen *screen    = [NSScreen mainScreen];
@@ -200,25 +215,33 @@
     
     WUWebView *webView = [[WUWebView alloc] initWithFrame:r];
     
-    CFUUIDRef uuid = CFUUIDCreate(nil);
-    NSString *uuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(nil, uuid));
-    CFRelease(uuid);
-    [webView setIdentifier:uuidString];
+//    CFUUIDRef uuid = CFUUIDCreate(nil);
+//    NSString *uuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(nil, uuid));
+//    CFRelease(uuid);
+//    [webView setIdentifier:uuidString];
     
     [webView setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
     [self.win setContentView:webView];
     [self.win setReleasedWhenClosed:NO];
     [self.win setTitle:@"Wunderlist"];
     
-    [webView setResourceLoadBlock:^NSURLRequest *(WUWebView *wv, id identifier, NSURLRequest *request, NSURLResponse *redirectResponse, WebDataSource *dataSource) {
-        
-        NSURLRequest *requestBack = [NSURLRequest requestWithURL:[request URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:[request timeoutInterval]];
-        return requestBack;
-    }];
+//    WebPreferences *pref = [[WebPreferences alloc] initWithIdentifier:@"_wu_cache_"];
+//    [pref setLoadsImagesAutomatically:YES];
+//    [pref setJavaScriptCanOpenWindowsAutomatically:YES];
+//    [pref setJavaScriptEnabled:YES];
+//    [pref setCacheModel:WebCacheModelDocumentViewer];
+//    [pref setPlugInsEnabled:YES];
+//    [pref setUsesPageCache:NO];
+//    [webView setPreferences:pref];
+//    [webView setResourceLoadBlock:^NSURLRequest *(WUWebView *wv, id identifier, NSURLRequest *request, NSURLResponse *redirectResponse, WebDataSource *dataSource) {
+//        
+//        NSURLRequest *requestBack = [NSURLRequest requestWithURL:[request URL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:[request timeoutInterval]];
+//        return requestBack;
+//    }];
 
     [webView setPolicyForNavigationBlock:^(WUWebView *wv, NSDictionary *actionInformation, NSURLRequest *request, WebFrame *frame, id<WebPolicyDecisionListener> listener) {
         
-        //NSLog(@"%@",request);
+        //NSLog(@"setPolicyForNavigationBlock %@",request);
         if([request.URL.absoluteString isEqualToString:@"https://www.wunderlist.com/login"])
         {
             dispatch_async(dispatch_get_main_queue(), ^{

@@ -25,6 +25,53 @@ static NSOperationQueue *operationQueue = nil;
     return operationQueue;
 }
 
+//+ (void) revoke_accessToken:(NSString*)accessToken block:(void (^)(BOOL ok, NSError*err))block
+//{
+////    RFC 7009                    Token Revocation                 August 2013
+////    For example, a client may request the revocation of a refresh token
+////    with the following request:
+////    
+////    POST /revoke HTTP/1.1
+////    Host: server.example.com
+////    Content-Type: application/x-www-form-urlencoded
+////    Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+////    token=45ghiukldjahdnhzdauz&token_type_hint=refresh_token
+//    
+//    NSString *apiURL                = [NSString stringWithFormat:@"https://www.wunderlist.com/oauth/revoke"];
+//    NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:apiURL] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:0];
+//    [theRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+//    
+//    NSMutableData *postData = [NSMutableData dataWithData:[[NSString stringWithFormat:@"token=%@",accessToken] dataUsingEncoding:NSUTF8StringEncoding]];
+//    [theRequest setHTTPBody:postData];
+//    [theRequest setHTTPMethod:@"POST"];
+//    
+//    [NSURLConnection sendAsynchronousRequest:theRequest queue:self.operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+//        
+//        if(connectionError)
+//        {
+//            NSLog(@"revoke_accessToken connectionError %@",connectionError);
+//            block(NO,connectionError);
+//            return;
+//        }
+//
+//        NSError *err = nil;
+//        
+//        NSLog(@"revoke_accessToken %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+//
+//        
+////        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+////        if(err)
+////        {
+////            NSLog(@"revoke_accessToken JSONObjectWithData %@",err);
+////            block(NO,err);
+////            return;
+////        }
+////        NSLog(@"revoke_accessToken %@",dict);
+//
+//        block(YES,nil);
+//    }];
+//}
+
 + (void) accessToken:(NSString*)code block:(void (^)(NSDictionary*dict, NSError*err))block
 {
     NSString *apiURL                = [NSString stringWithFormat:@"https://www.wunderlist.com/oauth/access_token"];
